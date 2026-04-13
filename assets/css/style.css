@@ -1,0 +1,44 @@
+:root { --bg:#0f172a; --card:#111827; --muted:#94a3b8; --text:#e5e7eb; --accent:#22c55e; --danger:#ef4444; }
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:#020617;color:var(--text);line-height:1.6;overflow-x:hidden}
+body::before,body::after{content:'';position:fixed;z-index:-1;border-radius:50%;filter:blur(80px);opacity:.25;animation:floatBlob 12s ease-in-out infinite alternate}
+body::before{width:320px;height:320px;background:#22c55e;top:-90px;left:-60px}
+body::after{width:300px;height:300px;background:#3b82f6;bottom:-100px;right:-80px;animation-delay:2s}
+.container{max-width:1120px;margin:0 auto;padding:0 16px}
+.site-header{position:sticky;top:0;background:rgba(2,6,23,.8);backdrop-filter:blur(12px);border-bottom:1px solid #1f2937;z-index:5}
+.nav-wrap{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding:14px 0}
+.logo{font-size:24px;font-weight:700;color:#fff;text-decoration:none;animation:glow 2.8s ease-in-out infinite}
+nav{display:flex;flex-wrap:wrap;gap:8px 12px}
+.auth-links{display:flex;align-items:center;gap:10px;white-space:nowrap}
+nav a,.auth-links a{margin-right:0;color:var(--muted);text-decoration:none;transition:.25s}
+nav a:hover,.auth-links a:hover{color:#fff;transform:translateY(-1px)}
+.hero{padding:64px 0;animation:fadeInUp .8s ease both}.hero h1{font-size:42px;line-height:1.2;margin-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:linear-gradient(180deg,#101827,#0c1322);border:1px solid #1f2937;border-radius:14px;padding:20px;transition:.25s transform,.25s box-shadow}
+.card:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+h2,h3{margin-top:0}
+.btn{display:inline-block;background:var(--accent);color:#031b0f;padding:10px 16px;border-radius:8px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:.2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(34,197,94,.2)}
+.btn.secondary{background:#334155;color:#e2e8f0}.btn.danger{background:var(--danger);color:#fff}
+form:not(.inline-form){background:var(--card);border:1px solid #1f2937;border-radius:12px;padding:20px;margin:12px 0}
+label{display:block;font-size:14px;color:var(--muted);margin-top:12px}
+input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #334155;background:#0b1220;color:#fff}
+.table{width:100%;border-collapse:collapse;margin-top:12px}.table th,.table td{border-bottom:1px solid #1f2937;padding:10px;text-align:left;font-size:14px}
+.site-footer{border-top:1px solid #1f2937;margin-top:28px;padding:20px 0;color:var(--muted)}
+.alert{padding:12px;border-radius:10px;margin:14px 0;animation:fadeInUp .5s ease both}.success{background:#052e16;color:#bbf7d0}.error{background:#450a0a;color:#fecaca}
+.inline-form{display:inline;margin:0;padding:0;border:none;background:none}
+.link-btn{background:none;border:none;color:#fca5a5;cursor:pointer;padding:0;font:inherit}
+.badge{padding:4px 8px;border-radius:99px;font-size:12px}.pending{background:#78350f}.approved{background:#14532d}.rejected{background:#7f1d1d}
+.filters{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end}
+.avatar-mini{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid #334155;vertical-align:middle;margin-right:8px}
+.avatar-large{width:110px;height:110px;border-radius:50%;object-fit:cover;border:2px solid #334155}
+.product-image{width:100%;height:220px;object-fit:cover;border-radius:8px;border:1px solid #334155;background:#000}
+.long-text p{margin-bottom:14px}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease, transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.page-hero{padding:34px 0;border-bottom:1px dashed #334155;margin-bottom:12px}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glow{0%,100%{text-shadow:0 0 0 rgba(34,197,94,0)}50%{text-shadow:0 0 16px rgba(34,197,94,.5)}}
+@keyframes floatBlob{from{transform:translateY(0) translateX(0)}to{transform:translateY(40px) translateX(18px)}}
+@media (max-width:1100px){.nav-wrap{grid-template-columns:1fr;align-items:flex-start}.auth-links{white-space:normal}}
+@media (max-width:860px){.filters{grid-template-columns:1fr}}
