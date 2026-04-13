@@ -2,6 +2,9 @@
 $repairStmt = db()->prepare('SELECT * FROM repair_requests WHERE user_id = :id ORDER BY created_at DESC');
 $repairStmt->execute(['id' => $user['id']]);
 $repairs = $repairStmt->fetchAll();
+$reviewStmt = db()->prepare('SELECT pr.*, p.name AS product_name FROM product_reviews pr JOIN products p ON p.id = pr.product_id WHERE pr.user_id = :id ORDER BY pr.created_at DESC');
+$reviewStmt->execute(['id' => $user['id']]);
+$myReviews = $reviewStmt->fetchAll();
 ?>
 
 <h1>Личный кабинет</h1>
@@ -72,4 +75,22 @@ $repairs = $repairStmt->fetchAll();
             </tbody>
         </table>
     </article>
+</div>
+
+
+<div class="card">
+    <h3>Мои отзывы о товарах</h3>
+    <table class="table">
+        <thead><tr><th>Товар</th><th>Оценка</th><th>Комментарий</th><th>Статус</th></tr></thead>
+        <tbody>
+        <?php foreach ($myReviews as $item): ?>
+            <tr>
+                <td><?= e($item['product_name']) ?></td>
+                <td><?= (int)$item['rating'] ?>/5</td>
+                <td><?= e($item['comment']) ?></td>
+                <td><span class="badge <?= e($item['status']) ?>"><?= e($item['status']) ?></span></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
 </div>

@@ -151,6 +151,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('/index.php?page=manager');
     }
 
+
+    if ($action === 'add_review') {
+        requireAuth();
+
+        $productId = (int)($_POST['product_id'] ?? 0);
+        $rating = (int)($_POST['rating'] ?? 0);
+        $comment = trim($_POST['comment'] ?? '');
+
+        if ($productId <= 0 || $rating < 1 || $rating > 5 || $comment === '') {
+            flash('error', 'Заполните корректно рейтинг и текст отзыва.');
+            redirect('/index.php?page=catalog');
+        }
+
+        $stmt = db()->prepare('INSERT INTO product_reviews (product_id, user_id, rating, comment, status) VALUES (:product_id, :user_id, :rating, :comment, :status)');
+        $stmt->execute([
+            'product_id' => $productId,
+            'user_id' => $user['id'],
+            'rating' => $rating,
+            'comment' => $comment,
+            'status' => 'pending',
+        ]);
+
+        flash('success', 'Спасибо! Отзыв отправлен на модерацию.');
+        redirect('/index.php?page=catalog');
+    }
+
     if ($action === 'create_repair_request') {
         requireAuth();
 
@@ -250,6 +276,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         flash('success', 'Статус заявки обновлен.');
+        redirect('/index.php?page=admin');
+    }
+
+
+    if ($action === 'review_decision') {
+        requireRole('admin');
+
+        $reviewId = (int)($_POST['review_id'] ?? 0);
+        $decision = ($_POST['decision'] ?? '') === 'approve' ? 'approved' : 'rejected';
+        $note = trim($_POST['admin_note'] ?? '');
+
+        if ($note === '') {
+            flash('error', 'Укажите комментарий администратора для модерации отзыва.');
+            redirect('/index.php?page=admin');
+        }
+
+        $stmt = db()->prepare('UPDATE product_reviews SET status = :status, admin_note = :admin_note WHERE id = :id');
+        $stmt->execute([
+            'status' => $decision,
+            'admin_note' => $note,
+            'id' => $reviewId,
+        ]);
+
+        flash('success', 'Решение по отзыву сохранено.');
         redirect('/index.php?page=admin');
     }
 

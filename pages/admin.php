@@ -4,10 +4,19 @@ $products = db()->query('SELECT p.*, c.title AS category_name FROM products p JO
 $news = db()->query('SELECT * FROM news ORDER BY id DESC LIMIT 20')->fetchAll();
 $requests = db()->query('SELECT r.*, u.name AS manager_name, c.title AS category_name FROM product_requests r JOIN users u ON u.id = r.manager_id JOIN categories c ON c.id = r.category_id ORDER BY r.id DESC')->fetchAll();
 $repairRequests = db()->query('SELECT rr.*, u.name AS user_name FROM repair_requests rr JOIN users u ON u.id = rr.user_id ORDER BY rr.id DESC')->fetchAll();
+$reviewRequests = db()->query('SELECT pr.*, p.name AS product_name, u.name AS user_name FROM product_reviews pr JOIN products p ON p.id = pr.product_id JOIN users u ON u.id = pr.user_id ORDER BY pr.id DESC')->fetchAll();
+$stats = db()->query('SELECT (SELECT COUNT(*) FROM products) AS products_count, (SELECT COUNT(*) FROM users) AS users_count, (SELECT COUNT(*) FROM repair_requests WHERE status = "pending") AS pending_repairs, (SELECT COUNT(*) FROM product_reviews WHERE status = "pending") AS pending_reviews')->fetch();
 ?>
 
 <h1>Админ-панель</h1>
-<p>Администратор управляет каталогом, категориями, новостями, модерацией заявок менеджеров и заявок на ремонт. Для каждой заявки на ремонт решение принимается только с обязательной причиной.</p>
+<p>Администратор управляет каталогом, категориями, новостями, модерацией заявок менеджеров, заявками на ремонт и теперь — отзывами покупателей.</p>
+
+<section class="grid">
+    <article class="card"><h3>Товаров</h3><p><?= (int)$stats['products_count'] ?></p></article>
+    <article class="card"><h3>Пользователей</h3><p><?= (int)$stats['users_count'] ?></p></article>
+    <article class="card"><h3>Ожидают ремонт</h3><p><?= (int)$stats['pending_repairs'] ?></p></article>
+    <article class="card"><h3>Ожидают отзывы</h3><p><?= (int)$stats['pending_reviews'] ?></p></article>
+</section>
 
 <section class="grid">
     <article class="card">
@@ -38,34 +47,12 @@ $repairRequests = db()->query('SELECT rr.*, u.name AS user_name FROM repair_requ
     <form method="post" action="<?= BASE_URL ?>/index.php?page=admin" enctype="multipart/form-data">
         <input type="hidden" name="action" value="add_product">
         <div class="grid">
-            <div>
-                <label>Название</label>
-                <input type="text" name="name" required>
-            </div>
-            <div>
-                <label>Бренд</label>
-                <input type="text" name="brand" required>
-            </div>
-            <div>
-                <label>Категория</label>
-                <select name="category_id" required>
-                    <?php foreach ($categories as $category): ?>
-                        <option value="<?= $category['id'] ?>"><?= e($category['title']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div>
-                <label>Цена</label>
-                <input type="number" name="price" step="0.01" required>
-            </div>
-            <div>
-                <label>Остаток</label>
-                <input type="number" name="stock" required>
-            </div>
-            <div>
-                <label>Фото товара</label>
-                <input type="file" name="product_image" accept="image/png,image/jpeg,image/webp">
-            </div>
+            <div><label>Название</label><input type="text" name="name" required></div>
+            <div><label>Бренд</label><input type="text" name="brand" required></div>
+            <div><label>Категория</label><select name="category_id" required><?php foreach ($categories as $category): ?><option value="<?= $category['id'] ?>"><?= e($category['title']) ?></option><?php endforeach; ?></select></div>
+            <div><label>Цена</label><input type="number" name="price" step="0.01" required></div>
+            <div><label>Остаток</label><input type="number" name="stock" required></div>
+            <div><label>Фото товара</label><input type="file" name="product_image" accept="image/png,image/jpeg,image/webp"></div>
         </div>
         <label>Описание</label>
         <textarea name="description" rows="4" required></textarea>
@@ -75,31 +62,30 @@ $repairRequests = db()->query('SELECT rr.*, u.name AS user_name FROM repair_requ
 </section>
 
 <section class="card">
-    <h3>Заявки менеджеров</h3>
+    <h3>Модерация отзывов</h3>
     <table class="table">
-        <thead><tr><th>Менеджер</th><th>Товар</th><th>Категория</th><th>Цена</th><th>Статус</th><th>Действия</th></tr></thead>
+        <thead><tr><th>Покупатель</th><th>Товар</th><th>Оценка</th><th>Отзыв</th><th>Статус</th><th>Решение</th></tr></thead>
         <tbody>
-        <?php foreach ($requests as $item): ?>
+        <?php foreach ($reviewRequests as $item): ?>
             <tr>
-                <td><?= e($item['manager_name']) ?></td>
-                <td><?= e($item['name']) ?> (<?= e($item['brand']) ?>)</td>
-                <td><?= e($item['category_name']) ?></td>
-                <td><?= number_format((float)$item['price'], 0, '.', ' ') ?> ₽</td>
+                <td><?= e($item['user_name']) ?></td>
+                <td><?= e($item['product_name']) ?></td>
+                <td><?= (int)$item['rating'] ?>/5</td>
+                <td><?= e($item['comment']) ?></td>
                 <td><span class="badge <?= e($item['status']) ?>"><?= e($item['status']) ?></span></td>
                 <td>
                     <?php if ($item['status'] === 'pending'): ?>
-                        <form class="inline-form" method="post" action="<?= BASE_URL ?>/index.php?page=admin">
-                            <input type="hidden" name="action" value="request_decision">
-                            <input type="hidden" name="request_id" value="<?= $item['id'] ?>">
-                            <input type="hidden" name="decision" value="approve">
-                            <button class="btn" type="submit">Принять</button>
+                        <form method="post" action="<?= BASE_URL ?>/index.php?page=admin">
+                            <input type="hidden" name="action" value="review_decision">
+                            <input type="hidden" name="review_id" value="<?= $item['id'] ?>">
+                            <label>Решение</label>
+                            <select name="decision" required><option value="approve">Одобрить</option><option value="reject">Отклонить</option></select>
+                            <label>Комментарий администратора</label>
+                            <textarea name="admin_note" rows="2" required></textarea>
+                            <button class="btn" type="submit">Сохранить</button>
                         </form>
-                        <form class="inline-form" method="post" action="<?= BASE_URL ?>/index.php?page=admin">
-                            <input type="hidden" name="action" value="request_decision">
-                            <input type="hidden" name="request_id" value="<?= $item['id'] ?>">
-                            <input type="hidden" name="decision" value="reject">
-                            <button class="btn danger" type="submit">Отклонить</button>
-                        </form>
+                    <?php else: ?>
+                        <?= e($item['admin_note'] ?? '—') ?>
                     <?php endif; ?>
                 </td>
             </tr>
@@ -140,31 +126,4 @@ $repairRequests = db()->query('SELECT rr.*, u.name AS user_name FROM repair_requ
         <?php endforeach; ?>
         </tbody>
     </table>
-</section>
-
-<section class="grid">
-    <article class="card">
-        <h3>Категории</h3>
-        <ul>
-            <?php foreach ($categories as $item): ?>
-                <li><?= e($item['title']) ?></li>
-            <?php endforeach; ?>
-        </ul>
-    </article>
-    <article class="card">
-        <h3>Последние новости</h3>
-        <ul>
-            <?php foreach ($news as $item): ?>
-                <li><?= e($item['title']) ?></li>
-            <?php endforeach; ?>
-        </ul>
-    </article>
-    <article class="card">
-        <h3>Товары (последние 50)</h3>
-        <ul>
-            <?php foreach ($products as $item): ?>
-                <li><?= e($item['name']) ?> — <?= number_format((float)$item['price'], 0, '.', ' ') ?> ₽</li>
-            <?php endforeach; ?>
-        </ul>
-    </article>
 </section>

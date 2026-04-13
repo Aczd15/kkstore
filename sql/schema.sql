@@ -53,6 +53,19 @@ CREATE TABLE IF NOT EXISTS product_requests (
     CONSTRAINT fk_requests_category FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
+CREATE TABLE IF NOT EXISTS product_reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    user_id INT NOT NULL,
+    rating TINYINT NOT NULL,
+    comment TEXT NOT NULL,
+    status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    admin_note VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_review_product FOREIGN KEY (product_id) REFERENCES products(id),
+    CONSTRAINT fk_review_user FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 CREATE TABLE IF NOT EXISTS repair_requests (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -97,3 +110,8 @@ INSERT INTO news (title, content) VALUES
 ('Открыт новый сервисный пост', 'Мы расширили сервисный центр и сократили среднее время ремонта смартфонов до 2 часов. Также внедрили систему фото-отчета по сложным заказам.'),
 ('Весенняя акция на аксессуары', 'До конца месяца действует скидка 20% на защитные стекла и чехлы при покупке смартфона. На комплект "стекло + чехол + настройка" действует спеццена.'),
 ('Корпоративное обслуживание', 'Запущен тариф для компаний: приоритетная поддержка, персональный инженер, выездная диагностика и отчеты для бухгалтерии.');
+
+INSERT INTO product_reviews (product_id, user_id, rating, comment, status, admin_note) VALUES
+(1, 1, 5, 'Очень быстрый смартфон, камера отличная, автономность приятно удивила.', 'approved', 'Проверенный отзыв'),
+(3, 2, 4, 'Хороший баланс цены и возможностей, для повседневных задач супер.', 'approved', 'Проверенный отзыв'),
+(8, 1, 5, 'Компактный и удобный powerbank, быстро заряжает устройства.', 'approved', 'Проверенный отзыв');
