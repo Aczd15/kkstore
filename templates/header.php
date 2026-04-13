@@ -25,6 +25,9 @@ $error = flash('error');
         </nav>
         <div class="auth-links">
             <?php if ($user): ?>
+                <?php if (!empty($user['avatar_path'])): ?>
+                    <img src="<?= BASE_URL . e($user['avatar_path']) ?>" alt="avatar" class="avatar-mini">
+                <?php endif; ?>
                 <a href="<?= BASE_URL ?>/index.php?page=dashboard">Личный кабинет</a>
                 <form action="<?= BASE_URL ?>/index.php" method="post" class="inline-form">
                     <input type="hidden" name="action" value="logout">

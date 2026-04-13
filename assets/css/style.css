@@ -20,4 +20,8 @@ input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid
 .inline-form{display:inline}.link-btn{background:none;border:none;color:#fca5a5;cursor:pointer}
 .badge{padding:4px 8px;border-radius:99px;font-size:12px}.pending{background:#78350f}.approved{background:#14532d}.rejected{background:#7f1d1d}
 .filters{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end}
+.avatar-mini{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid #334155;vertical-align:middle;margin-right:8px}
+.avatar-large{width:110px;height:110px;border-radius:50%;object-fit:cover;border:2px solid #334155}
+.product-image{width:100%;height:220px;object-fit:cover;border-radius:8px;border:1px solid #334155;background:#000}
+.long-text p{margin-bottom:14px}
 @media (max-width:860px){.nav-wrap{flex-direction:column;align-items:flex-start}.filters{grid-template-columns:1fr}}

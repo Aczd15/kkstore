@@ -30,6 +30,11 @@ $brands = db()->query('SELECT DISTINCT brand FROM products ORDER BY brand')->fet
 <h1>Каталог товаров</h1>
 <p>В каталоге KKStore собраны популярные смартфоны, планшеты, ноутбуки и аксессуары от ведущих брендов. Используйте фильтры для быстрого подбора по категории, бренду и цене.</p>
 
+<div class="card long-text">
+    <p>Мы регулярно обновляем ассортимент с учетом новых релизов и отзывов клиентов. Для каждого товара команда подготавливает подробное описание, чтобы вам было проще выбрать устройство для учебы, работы, игр или ежедневных задач.</p>
+    <p>Если вы не нашли нужную модель, менеджер может подать внутреннюю заявку на добавление позиции в каталог. Это удобно для редких конфигураций и корпоративных заказов.</p>
+</div>
+
 <form method="get" class="filters">
     <input type="hidden" name="page" value="catalog">
     <div>
@@ -60,6 +65,9 @@ $brands = db()->query('SELECT DISTINCT brand FROM products ORDER BY brand')->fet
 <section class="grid">
     <?php foreach ($products as $product): ?>
         <article class="card">
+            <?php if (!empty($product['image_path'])): ?>
+                <img class="product-image" src="<?= BASE_URL . e($product['image_path']) ?>" alt="<?= e($product['name']) ?>">
+            <?php endif; ?>
             <h3><?= e($product['name']) ?></h3>
             <p><strong>Бренд:</strong> <?= e($product['brand']) ?> · <strong>Категория:</strong> <?= e($product['category_name']) ?></p>
             <p><?= e($product['description']) ?></p>
