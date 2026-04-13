@@ -20,6 +20,10 @@ $error = flash('error');
             <a href="<?= BASE_URL ?>/index.php?page=repairs">Ремонт</a>
             <a href="<?= BASE_URL ?>/index.php?page=accessories">Аксессуары</a>
             <a href="<?= BASE_URL ?>/index.php?page=news">Новости</a>
+            <a href="<?= BASE_URL ?>/index.php?page=promotions">Акции</a>
+            <a href="<?= BASE_URL ?>/index.php?page=faq">FAQ</a>
+            <a href="<?= BASE_URL ?>/index.php?page=warranty">Гарантия</a>
+            <a href="<?= BASE_URL ?>/index.php?page=tradein">Trade-in</a>
             <a href="<?= BASE_URL ?>/index.php?page=about">О нас</a>
             <a href="<?= BASE_URL ?>/index.php?page=contacts">Контакты</a>
         </nav>

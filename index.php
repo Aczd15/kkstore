@@ -349,7 +349,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $allowedPages = [
     'home', 'catalog', 'services', 'about', 'news', 'contacts', 'login', 'register',
-    'dashboard', 'admin', 'manager', 'repairs', 'accessories'
+    'dashboard', 'admin', 'manager', 'repairs', 'accessories', 'promotions', 'faq', 'warranty', 'tradein'
 ];
 
 if (!in_array($page, $allowedPages, true)) {
