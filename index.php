@@ -196,6 +196,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('/index.php?page=repairs');
     }
 
+
+    if ($action === 'update_user_role') {
+        requireRole('admin');
+
+        $userId = (int)($_POST['user_id'] ?? 0);
+        $role = $_POST['role'] ?? 'customer';
+        $allowedRoles = ['customer', 'manager', 'admin'];
+
+        if ($userId <= 0 || !in_array($role, $allowedRoles, true)) {
+            flash('error', 'Некорректные данные для обновления роли пользователя.');
+            redirect('/index.php?page=admin&tab=users');
+        }
+
+        $stmt = db()->prepare('UPDATE users SET role = :role WHERE id = :id');
+        $stmt->execute(['role' => $role, 'id' => $userId]);
+
+        flash('success', 'Роль пользователя обновлена.');
+        redirect('/index.php?page=admin&tab=users');
+    }
+
     if ($action === 'add_category') {
         requireRole('admin');
 
